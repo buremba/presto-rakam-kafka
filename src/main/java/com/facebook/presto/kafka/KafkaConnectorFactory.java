@@ -62,6 +62,7 @@ public class KafkaConnectorFactory
             Bootstrap app = new Bootstrap(
                     new JsonModule(),
                     new KafkaConnectorModule(),
+                    new MetastoreModule(),
                     binder -> {
                         binder.bindConstant().annotatedWith(Names.named("connectorId")).to(connectorId);
                         binder.bind(TypeManager.class).toInstance(typeManager);
