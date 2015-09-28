@@ -30,7 +30,7 @@ import static io.airlift.configuration.ConfigBinder.configBinder;
 public class MetastoreModule implements Module {
     @Override
     public void configure(Binder binder) {
-        configBinder(binder).bindConfig(JDBCConfig.class, Names.named("presto.metastore.jdbc"), "metastore.jdbc");
+        configBinder(binder).bindConfig(JDBCConfig.class, Names.named("presto.metastore.jdbc"), "presto.metastore.jdbc");
         binder.bind(Metastore.class).to(JDBCMetastore.class).in(Scopes.SINGLETON);
         binder.bind(PrestoConfig.class).toInstance(new PrestoConfig()
                 .setStorage("file:///Users/buremba/rakam/presto")
