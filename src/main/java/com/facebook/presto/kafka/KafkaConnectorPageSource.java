@@ -91,9 +91,10 @@ public class KafkaConnectorPageSource
         List<Schema.Field> actualSchemaFields = actualSchema.getFields();
         List<Schema.Field> fields = new ArrayList<>();
         for (KafkaColumnHandle columnHandle : columnHandles) {
-            if(columnHandle.isHidden()) {
+            if (columnHandle.isHidden()) {
                 fields.add(new Schema.Field("_", Schema.create(Schema.Type.BYTES), "", TextNode.valueOf("")));
-            } else {
+            }
+            else {
                 Schema.Field field = actualSchemaFields.stream()
                         .filter(e -> e.name().equals(columnHandle.getName())).findAny().get();
                 fields.add(new Schema.Field(field.name(), field.schema(), field.doc(), field.defaultValue()));
@@ -110,7 +111,8 @@ public class KafkaConnectorPageSource
 
         try {
             datumReader = new PageDatumReader(pageBuilder, actualSchema, expectedSchema);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw Throwables.propagate(e);
         }
 
@@ -120,11 +122,13 @@ public class KafkaConnectorPageSource
         this.hiddenColumnSupplier = hiddenColumnSupplier.length == 0 ? null : hiddenColumnSupplier;
     }
 
-    private boolean isHidden(String name) {
+    private boolean isHidden(String name)
+    {
         return name.equals("project") || name.equals("collection") || name.equals("_offset");
     }
 
-    private Consumer getSupplier(KafkaColumnHandle handle) {
+    private Consumer getSupplier(KafkaColumnHandle handle)
+    {
         BlockBuilder blockBuilder = pageBuilder.getBlockBuilder(handle.getOrdinalPosition());
 
         switch (handle.getName()) {
@@ -135,37 +139,45 @@ public class KafkaConnectorPageSource
             case "_offset":
                 return new OffsetSupplier(blockBuilder);
 
-            default: throw new IllegalStateException();
+            default:
+                throw new IllegalStateException();
         }
     }
 
     @Override
-    public long getTotalBytes() {
+    public long getTotalBytes()
+    {
         return totalBytes;
     }
 
     @Override
-    public long getCompletedBytes() {
+    public long getCompletedBytes()
+    {
         return totalBytes;
     }
 
     @Override
-    public long getReadTimeNanos() {
+    public long getReadTimeNanos()
+    {
         return 0;
     }
 
     @Override
-    public boolean isFinished() {
+    public boolean isFinished()
+    {
         return reported.get();
     }
 
     @Override
-    public Page getNextPage() {
+    public Page getNextPage()
+    {
         return advanceNextPosition();
     }
 
     @Override
-    public void close() throws IOException {
+    public void close()
+            throws IOException
+    {
         pageBuilder.reset();
     }
 
@@ -201,13 +213,13 @@ public class KafkaConnectorPageSource
                 }
             }
 
-            if(fetchResponse == null) {
+            if (fetchResponse == null) {
                 throw new IllegalStateException("No Kafka nodes available.");
             }
 
             if (fetchResponse.hasError()) {
                 short errorCode = fetchResponse.errorCode(split.getTopicName(), split.getPartitionId());
-                if(errorCode == 1) {
+                if (errorCode == 1) {
                     throw new PrestoException(KafkaErrorCode.KAFKA_SPLIT_ERROR, format("Could not fetch data from Kafka, error code is %s. Probably Kafka deleted the messages of the offset that you requested.'", errorCode));
                 }
                 log.warn("Fetch response has error: %d", errorCode);
@@ -223,7 +235,7 @@ public class KafkaConnectorPageSource
         while (true) {
             if (cursorOffset >= split.getEnd()) {
                 endOfData();
-                if(pageBuilder.isEmpty()) {
+                if (pageBuilder.isEmpty()) {
                     return null;
                 }
                 return pageBuilder.build();
@@ -278,7 +290,7 @@ public class KafkaConnectorPageSource
 //        }, decoder);
 //
 
-        if(hiddenColumnSupplier != null) {
+        if (hiddenColumnSupplier != null) {
             for (Consumer consumer : hiddenColumnSupplier) {
                 consumer.accept(messageAndOffset);
             }
@@ -287,7 +299,8 @@ public class KafkaConnectorPageSource
 
         try {
             datumReader.read(null, decoder);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error(e, "couldn't read kafka message");
             return false;
         }
@@ -295,30 +308,38 @@ public class KafkaConnectorPageSource
         return true; // Advanced successfully.
     }
 
-    private static class SliceSupplier implements Consumer<MessageAndOffset> {
+    private static class SliceSupplier
+            implements Consumer<MessageAndOffset>
+    {
         private final Slice slice;
         private final BlockBuilder builder;
 
-        public SliceSupplier(BlockBuilder builder, String str) {
+        public SliceSupplier(BlockBuilder builder, String str)
+        {
             this.slice = Slices.utf8Slice(str);
             this.builder = builder;
         }
 
         @Override
-        public void accept(MessageAndOffset messageAndOffset) {
+        public void accept(MessageAndOffset messageAndOffset)
+        {
             VARCHAR.writeSlice(builder, slice);
         }
     }
 
-    private static class OffsetSupplier implements Consumer<MessageAndOffset> {
+    private static class OffsetSupplier
+            implements Consumer<MessageAndOffset>
+    {
         private final BlockBuilder builder;
 
-        public OffsetSupplier(BlockBuilder builder) {
+        public OffsetSupplier(BlockBuilder builder)
+        {
             this.builder = builder;
         }
 
         @Override
-        public void accept(MessageAndOffset messageAndOffset) {
+        public void accept(MessageAndOffset messageAndOffset)
+        {
             BIGINT.writeLong(builder, messageAndOffset.offset());
         }
     }

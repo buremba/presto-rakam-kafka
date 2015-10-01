@@ -109,7 +109,8 @@ public class TestKafkaPlugin
         }
 
         @Override
-        public Set<Node> getCoordinators() {
+        public Set<Node> getCoordinators()
+        {
             return null;
         }
     }

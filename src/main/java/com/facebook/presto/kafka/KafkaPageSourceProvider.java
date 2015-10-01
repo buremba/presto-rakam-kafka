@@ -22,14 +22,14 @@ import com.google.common.collect.ImmutableList;
 import org.rakam.collection.event.metastore.Metastore;
 
 import javax.inject.Inject;
+
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by buremba <Burak Emre Kabakcı> on 31/07/15 01:50.
- */
-public class KafkaPageSourceProvider implements ConnectorPageSourceProvider {
+public class KafkaPageSourceProvider
+        implements ConnectorPageSourceProvider
+{
     private final KafkaHandleResolver handleResolver;
     private final KafkaSimpleConsumerManager consumerManager;
     private final Metastore schemaMetastore;
@@ -46,7 +46,8 @@ public class KafkaPageSourceProvider implements ConnectorPageSourceProvider {
     }
 
     @Override
-    public ConnectorPageSource createPageSource(ConnectorSession session, ConnectorSplit split, List<ColumnHandle> columns) {
+    public ConnectorPageSource createPageSource(ConnectorSession session, ConnectorSplit split, List<ColumnHandle> columns)
+    {
         KafkaSplit kafkaSplit = handleResolver.convertSplit(split);
 
         ImmutableList.Builder<KafkaColumnHandle> handleBuilder = ImmutableList.builder();
@@ -57,6 +58,4 @@ public class KafkaPageSourceProvider implements ConnectorPageSourceProvider {
 
         return new KafkaConnectorPageSource(kafkaSplit, consumerManager, handleBuilder.build(), schemaMetastore);
     }
-
-
 }

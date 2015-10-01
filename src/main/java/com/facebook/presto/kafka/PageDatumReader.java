@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.facebook.presto.kafka;
+
 import com.facebook.presto.spi.PageBuilder;
 import com.facebook.presto.spi.block.BlockBuilder;
 import io.airlift.slice.Slice;
@@ -30,37 +31,43 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
 
-/**
- * Created by buremba <Burak Emre Kabakcı> on 24/07/15 23:02.
- */
-public class PageDatumReader implements DatumReader<Void> {
+public class PageDatumReader
+        implements DatumReader<Void>
+{
     private final PageBuilder builder;
     private final ResolvingDecoder resolver;
 
     private ResolvingDecoder creatorResolver = null;
     private final Thread creator = Thread.currentThread();
 
-    public PageDatumReader(PageBuilder pageBuilder, Schema schema) throws IOException {
+    public PageDatumReader(PageBuilder pageBuilder, Schema schema)
+            throws IOException
+    {
         this(pageBuilder, schema, schema);
     }
 
-    public PageDatumReader(PageBuilder pageBuilder, Schema actualSchema, Schema expectedSchema) throws IOException {
+    public PageDatumReader(PageBuilder pageBuilder, Schema actualSchema, Schema expectedSchema)
+            throws IOException
+    {
         this.builder = pageBuilder;
         resolver = getResolver(actualSchema, expectedSchema);
         checkState(actualSchema.getFields() != null, "Not a record");
         checkState(expectedSchema.getFields() != null, "Not a record");
     }
 
-    private static final ThreadLocal<Map<Schema,Map<Schema,ResolvingDecoder>>>
+    private static final ThreadLocal<Map<Schema, Map<Schema, ResolvingDecoder>>>
             RESOLVER_CACHE =
-            new ThreadLocal<Map<Schema,Map<Schema,ResolvingDecoder>>>() {
-                protected Map<Schema,Map<Schema,ResolvingDecoder>> initialValue() {
+            new ThreadLocal<Map<Schema, Map<Schema, ResolvingDecoder>>>()
+            {
+                protected Map<Schema, Map<Schema, ResolvingDecoder>> initialValue()
+                {
                     return new WeakIdentityHashMap<>();
                 }
             };
 
     protected final ResolvingDecoder getResolver(Schema actual, Schema expected)
-            throws IOException {
+            throws IOException
+    {
         Thread currThread = Thread.currentThread();
         ResolvingDecoder resolver;
         if (currThread == creator && creatorResolver != null) {
@@ -78,7 +85,7 @@ public class PageDatumReader implements DatumReader<Void> {
             cache.put(expected, resolver);
         }
 
-        if (currThread == creator){
+        if (currThread == creator) {
             creatorResolver = resolver;
         }
 
@@ -86,13 +93,16 @@ public class PageDatumReader implements DatumReader<Void> {
     }
 
     @Override
-    public void setSchema(Schema schema) {
+    public void setSchema(Schema schema)
+    {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Void read(Void reuse, Decoder in) throws IOException {
+    public Void read(Void reuse, Decoder in)
+            throws IOException
+    {
         resolver.configure(in);
 
         readRecord(resolver);
@@ -101,73 +111,110 @@ public class PageDatumReader implements DatumReader<Void> {
         return null;
     }
 
-    protected void readRecord(ResolvingDecoder in) throws IOException {
+    protected void readRecord(ResolvingDecoder in)
+            throws IOException
+    {
         for (Schema.Field field : in.readFieldOrder()) {
             BlockBuilder blockBuilder = builder.getBlockBuilder(field.pos());
             read(field.schema(), in, blockBuilder);
         }
     }
 
-    protected void read(Schema schema, ResolvingDecoder in, BlockBuilder blockBuilder) throws IOException {
+    protected void read(Schema schema, ResolvingDecoder in, BlockBuilder blockBuilder)
+            throws IOException
+    {
         switch (schema.getType()) {
-            case UNION:   read(schema.getTypes().get(in.readIndex()), in, blockBuilder); break;
-            case LONG:    blockBuilder.writeLong(in.readLong()).closeEntry(); break;
+            case UNION:
+                read(schema.getTypes().get(in.readIndex()), in, blockBuilder);
+                break;
+            case LONG:
+                blockBuilder.writeLong(in.readLong()).closeEntry();
+                break;
             case STRING:
                 Slice source = Slices.utf8Slice(in.readString());
-                blockBuilder.writeBytes(source, 0, source.length()).closeEntry(); break;
+                blockBuilder.writeBytes(source, 0, source.length()).closeEntry();
+                break;
             case ENUM:
-                blockBuilder.writeByte(in.readEnum()).closeEntry(); break;
-            case INT:     blockBuilder.writeInt(in.readInt()).closeEntry(); break;
-            case FLOAT:   blockBuilder.writeFloat(in.readFloat()).closeEntry(); break;
-            case DOUBLE:  blockBuilder.writeDouble(in.readDouble()).closeEntry(); break;
-            case BOOLEAN: blockBuilder.writeByte(in.readBoolean() ? 1 : 0).closeEntry(); break;
+                blockBuilder.writeByte(in.readEnum()).closeEntry();
+                break;
+            case INT:
+                blockBuilder.writeInt(in.readInt()).closeEntry();
+                break;
+            case FLOAT:
+                blockBuilder.writeFloat(in.readFloat()).closeEntry();
+                break;
+            case DOUBLE:
+                blockBuilder.writeDouble(in.readDouble()).closeEntry();
+                break;
+            case BOOLEAN:
+                blockBuilder.writeByte(in.readBoolean() ? 1 : 0).closeEntry();
+                break;
             case NULL:
                 in.readNull();
-                blockBuilder.appendNull(); break;
+                blockBuilder.appendNull();
+                break;
             case RECORD:
             case FIXED:
             case ARRAY:
-            case MAP: throw new UnsupportedOperationException();
-            case BYTES: break; // we do not support bytes, this is a hack for hidden presto columns.
-            default: throw new AvroRuntimeException("Unknown type: " + schema);
+            case MAP:
+                throw new UnsupportedOperationException();
+            case BYTES:
+                break; // we do not support bytes, this is a hack for hidden presto columns.
+            default:
+                throw new AvroRuntimeException("Unknown type: " + schema);
         }
     }
 
-    /** Called to read an array instance.  May be overridden for alternate array
-     * representations.*/
-    protected Object readArray(Schema expected, ResolvingDecoder in) throws IOException {
-        Schema expectedType = expected.getElementType();
-        long l = in.readArrayStart();
-        long base = 0;
-        if (l > 0) {
-            Object array = newArray((int) l, expected);
-            do {
-                for (long i = 0; i < l; i++) {
+    /**
+     * Called to read an array instance.  May be overridden for alternate array
+     * representations.
+     */
+//    protected Object readArray(Schema expected, ResolvingDecoder in)
+//            throws IOException
+//    {
+//        Schema expectedType = expected.getElementType();
+//        long l = in.readArrayStart();
+//        long base = 0;
+//        if (l > 0) {
+//            Object array = newArray((int) l, expected);
+//            do {
+//                l = in.arrayNext();
+//                for (long i = 0; i < l; i++) {
 //                    read(expectedType, in);
 //                    addToArray(array, base + i, read(expectedType, in));
-                }
-                base += l;
-            } while ((l = in.arrayNext()) > 0);
-            return array;
-        } else {
-            return newArray(0, expected);
-        }
-    }
+//                }
+//                base += l;
+//            }
+//            while (l > 0);
+//            return array;
+//        }
+//        else {
+//            return newArray(0, expected);
+//        }
+//    }
 
-    /** Called to create new array instances.  Subclasses may override to use a
+    /**
+     * Called to create new array instances.  Subclasses may override to use a
      * different array implementation.  By default, this returns a {@link
-     * GenericData.Array}.*/
+     * GenericData.Array}.
+     */
     @SuppressWarnings("unchecked")
-    protected Object newArray(int size, Schema schema) {
+    protected Object newArray(int size, Schema schema)
+    {
         return new GenericData.Array(size, schema);
     }
 
-    /** Skip an instance of a schema. */
-    public static void skip(Schema schema, Decoder in) throws IOException {
+    /**
+     * Skip an instance of a schema.
+     */
+    public static void skip(Schema schema, Decoder in)
+            throws IOException
+    {
         switch (schema.getType()) {
             case RECORD:
-                for (Schema.Field field : schema.getFields())
+                for (Schema.Field field : schema.getFields()) {
                     skip(field.schema(), in);
+                }
                 break;
             case ENUM:
                 in.readInt();
@@ -201,14 +248,25 @@ public class PageDatumReader implements DatumReader<Void> {
             case BYTES:
                 in.skipBytes();
                 break;
-            case INT:     in.readInt();           break;
-            case LONG:    in.readLong();          break;
-            case FLOAT:   in.readFloat();         break;
-            case DOUBLE:  in.readDouble();        break;
-            case BOOLEAN: in.readBoolean();       break;
-            case NULL:                            break;
-            default: throw new RuntimeException("Unknown type: "+schema);
+            case INT:
+                in.readInt();
+                break;
+            case LONG:
+                in.readLong();
+                break;
+            case FLOAT:
+                in.readFloat();
+                break;
+            case DOUBLE:
+                in.readDouble();
+                break;
+            case BOOLEAN:
+                in.readBoolean();
+                break;
+            case NULL:
+                break;
+            default:
+                throw new RuntimeException("Unknown type: " + schema);
         }
     }
-
 }

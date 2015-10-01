@@ -21,6 +21,7 @@ import com.facebook.presto.spi.TupleDomain;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +57,8 @@ public class KafkaPartition
     }
 
     @Nullable
-    public List<Range> getOffsets() {
+    public List<Range> getOffsets()
+    {
         return offsets;
     }
 
@@ -67,7 +69,8 @@ public class KafkaPartition
     }
 
     @Override
-    public TupleDomain<ColumnHandle> getTupleDomain() {
+    public TupleDomain<ColumnHandle> getTupleDomain()
+    {
         return TupleDomain.all();
     }
 

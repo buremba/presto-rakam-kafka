@@ -50,7 +50,8 @@ public class KafkaHandleResolver
     }
 
     @Override
-    public boolean canHandle(ColumnHandle columnHandle) {
+    public boolean canHandle(ColumnHandle columnHandle)
+    {
         return columnHandle != null && columnHandle instanceof KafkaColumnHandle && connectorId.equals(((KafkaColumnHandle) columnHandle).getConnectorId());
     }
 

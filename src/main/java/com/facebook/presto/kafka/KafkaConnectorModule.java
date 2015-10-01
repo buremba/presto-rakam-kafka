@@ -26,17 +26,18 @@ import javax.inject.Inject;
 import static com.facebook.presto.spi.type.TypeSignature.parseTypeSignature;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.airlift.configuration.ConfigurationModule.bindConfig;
+import static io.airlift.configuration.ConfigBinder.configBinder;
 import static io.airlift.json.JsonBinder.jsonBinder;
 
 /**
  * Guice module for the Apache Kafka connector.
  */
-public class KafkaConnectorModule extends AbstractConfigurationAwareModule
+public class KafkaConnectorModule
+        extends AbstractConfigurationAwareModule
 {
-
     @Override
-    protected void setup(Binder binder) {
+    protected void setup(Binder binder)
+    {
         binder.bind(KafkaConnector.class).in(Scopes.SINGLETON);
 
         binder.bind(KafkaHandleResolver.class).in(Scopes.SINGLETON);
@@ -46,7 +47,7 @@ public class KafkaConnectorModule extends AbstractConfigurationAwareModule
 
         binder.bind(KafkaSimpleConsumerManager.class).in(Scopes.SINGLETON);
 
-        bindConfig(binder).to(KafkaConnectorConfig.class);
+        configBinder(binder).bindConfig(KafkaConnectorConfig.class);
 
         jsonBinder(binder).addDeserializerBinding(Type.class).to(TypeDeserializer.class);
     }

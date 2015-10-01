@@ -41,6 +41,7 @@ import org.rakam.collection.SchemaField;
 import org.rakam.collection.event.metastore.Metastore;
 
 import javax.inject.Inject;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class KafkaMetadata
     @Inject
     KafkaMetadata(@Named("connectorId") String connectorId,
             KafkaConnectorConfig kafkaConnectorConfig,
-                  Metastore metastore,
+            Metastore metastore,
             KafkaHandleResolver handleResolver)
     {
         this.connectorId = checkNotNull(connectorId, "connectorId is null");
@@ -85,7 +86,8 @@ public class KafkaMetadata
     }
 
     @Override
-    public ConnectorTableMetadata getTableMetadata(ConnectorSession session, ConnectorTableHandle table) {
+    public ConnectorTableMetadata getTableMetadata(ConnectorSession session, ConnectorTableHandle table)
+    {
         KafkaTableHandle kafkaTableHandle = handleResolver.convertTableHandle(table);
         return getTableMetadata(kafkaTableHandle.toSchemaTableName());
     }
@@ -99,12 +101,14 @@ public class KafkaMetadata
     }
 
     @Override
-    public ColumnHandle getSampleWeightColumnHandle(ConnectorSession session, ConnectorTableHandle tableHandle) {
+    public ColumnHandle getSampleWeightColumnHandle(ConnectorSession session, ConnectorTableHandle tableHandle)
+    {
         return null;
     }
 
     @Override
-    public Map<String, ColumnHandle> getColumnHandles(ConnectorSession session, ConnectorTableHandle tableHandle) {
+    public Map<String, ColumnHandle> getColumnHandles(ConnectorSession session, ConnectorTableHandle tableHandle)
+    {
         KafkaTableHandle kafkaTableHandle = handleResolver.convertTableHandle(tableHandle);
 
         ConnectorTableMetadata tableMetadata = getTableMetadata(session, kafkaTableHandle);
@@ -124,7 +128,8 @@ public class KafkaMetadata
     }
 
     @Override
-    public ColumnMetadata getColumnMetadata(ConnectorSession session, ConnectorTableHandle tableHandle, ColumnHandle columnHandle) {
+    public ColumnMetadata getColumnMetadata(ConnectorSession session, ConnectorTableHandle tableHandle, ColumnHandle columnHandle)
+    {
         handleResolver.convertTableHandle(tableHandle);
         KafkaColumnHandle kafkaColumnHandle = handleResolver.convertColumnHandle(columnHandle);
 
@@ -173,7 +178,8 @@ public class KafkaMetadata
         return new ConnectorTableMetadata(schemaTableName, builder.build());
     }
 
-    private static Type schemaToPrestoType(FieldType schema) {
+    private static Type schemaToPrestoType(FieldType schema)
+    {
         switch (schema) {
             case STRING:
                 return VarcharType.VARCHAR;
@@ -192,8 +198,7 @@ public class KafkaMetadata
             case TIME:
                 return TimeType.TIME;
             default:
-                throw new PrestoException(KafkaErrorCode.AVRO_TYPE_NOT_SUPPORTED, "Avro type is not compatible with Presto type: "+schema);
+                throw new PrestoException(KafkaErrorCode.AVRO_TYPE_NOT_SUPPORTED, "Avro type is not compatible with Presto type: " + schema);
         }
     }
-
 }

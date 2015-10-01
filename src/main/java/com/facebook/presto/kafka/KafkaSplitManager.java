@@ -46,6 +46,7 @@ import kafka.javaapi.consumer.SimpleConsumer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -89,15 +90,14 @@ public class KafkaSplitManager
         List<HostAddress> nodes = new ArrayList<>(kafkaConnectorConfig.getNodes());
         Collections.shuffle(nodes);
 
-
         SimpleConsumer simpleConsumer = consumerManager.getConsumer(nodes.get(0));
         Map<ColumnHandle, Domain> domains = Maps.newHashMap(tupleDomain.getDomains());
         Iterator<Map.Entry<ColumnHandle, Domain>> it = domains.entrySet().iterator();
         List<Range> offsets = null;
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Map.Entry<ColumnHandle, Domain> next = it.next();
-            if(((KafkaColumnHandle) next.getKey()).getName().equals("_offset")) {
+            if (((KafkaColumnHandle) next.getKey()).getName().equals("_offset")) {
                 offsets = next.getValue().getRanges().getRanges();
                 it.remove();
                 break;
@@ -105,7 +105,7 @@ public class KafkaSplitManager
         }
 
         tupleDomain = TupleDomain.withColumnDomains(domains);
-        String schemaName = kafkaTableHandle.getSchemaName()+"_"+kafkaTableHandle.getTableName();
+        String schemaName = kafkaTableHandle.getSchemaName() + "_" + kafkaTableHandle.getTableName();
 
         try {
             TopicMetadataRequest topicMetadataRequest = new TopicMetadataRequest(ImmutableList.of(schemaName));
@@ -136,7 +136,6 @@ public class KafkaSplitManager
             throw new PrestoException(KafkaErrorCode.KAFKA_SPLIT_ERROR,
                     format("error while fetching data from kafka topic %s", schemaName), e);
         }
-
     }
 
     @Override
@@ -154,25 +153,27 @@ public class KafkaSplitManager
             // Kafka contains a reverse list of "end - start" pairs for the splits
             long[] offsets;
             List<Range> partitionOffsets = partition.getOffsets();
-            if(partitionOffsets == null) {
+            if (partitionOffsets == null) {
                 offsets = findAllOffsets(leaderConsumer, partition);
-            } else {
-                offsets = new long[partitionOffsets.size()*2];
+            }
+            else {
+                offsets = new long[partitionOffsets.size() * 2];
                 for (int i = 0; i < partitionOffsets.size(); i++) {
                     Range partitionOffset = partitionOffsets.get(i);
 
                     Marker high = partitionOffset.getHigh();
-                    if(high.isUpperUnbounded()) {
+                    if (high.isUpperUnbounded()) {
                         long upperBound = findAllOffsets(leaderConsumer, partition)[0];
                         offsets[i] = upperBound;
-                    }else {
+                    }
+                    else {
                         offsets[i] = ((Number) high.getValue()).longValue();
                     }
 
                     Marker low = partitionOffset.getLow();
-                    offsets[i+1] = low.isLowerUnbounded() ? 0 : ((Number) low.getValue()).longValue();
-                    if(!low.getBound().equals(Marker.Bound.EXACTLY)) {
-                        offsets[i+1]++;
+                    offsets[i + 1] = low.isLowerUnbounded() ? 0 : ((Number) low.getValue()).longValue();
+                    if (!low.getBound().equals(Marker.Bound.EXACTLY)) {
+                        offsets[i + 1]++;
                     }
                 }
             }
@@ -182,7 +183,7 @@ public class KafkaSplitManager
                         partition.getTopicName(),
                         partition.getPartitionIdAsInt(),
                         offsets[i],
-                        offsets[i-1],
+                        offsets[i - 1],
                         partition.getPartitionNodes());
                 builder.add(split);
             }

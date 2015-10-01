@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Represents a kafka specific {@link ConnectorSplit}. Each split is mapped to a segment file on disk (based off the segment offset start() and end() values) so that
  * a partition can be processed by reading segment files off different Kafka nodes (in case of replication) and by different workers. Otherwise, a Kafka topic could only
  * be processed along partition boundaries.
- * <p/>
+ * <p>
  * When planning to process a Kafka topic with Presto, using smaller than the recommended segment size (default is 1G) allows Presto to optimize early and process a topic
  * with more workers in parallel.
  */
