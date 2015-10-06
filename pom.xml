@@ -15,6 +15,7 @@
 
     <properties>
         <air.main.basedir>${project.parent.basedir}</air.main.basedir>
+        <rakam.version>0.2-SNAPSHOT</rakam.version>
     </properties>
 
     <dependencies>
@@ -47,7 +48,7 @@
         <dependency>
             <groupId>org.rakam</groupId>
             <artifactId>rakam-spi</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${rakam.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jdbi</groupId>
@@ -75,7 +76,7 @@
         <dependency>
             <groupId>org.rakam</groupId>
             <artifactId>rakam-presto</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>${rakam.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.facebook.presto</groupId>
