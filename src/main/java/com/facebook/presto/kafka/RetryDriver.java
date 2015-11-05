@@ -19,12 +19,11 @@ import io.airlift.units.Duration;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RetryDriver
 {
@@ -103,7 +102,7 @@ public class RetryDriver
     @SafeVarargs
     public final RetryDriver stopOn(Class<? extends Exception>... classes)
     {
-        checkNotNull(classes, "classes is null");
+        Objects.requireNonNull(classes, "classes is null");
         List<Class<? extends Exception>> exceptions = ImmutableList.<Class<? extends Exception>>builder()
                 .addAll(exceptionWhiteList)
                 .addAll(Arrays.asList(classes))
@@ -120,8 +119,8 @@ public class RetryDriver
     public <V> V run(String callableName, Callable<V> callable)
             throws Exception
     {
-        checkNotNull(callableName, "callableName is null");
-        checkNotNull(callable, "callable is null");
+        Objects.requireNonNull(callableName, "callableName is null");
+        Objects.requireNonNull(callable, "callable is null");
 
         long startTime = System.nanoTime();
         int attempt = 0;

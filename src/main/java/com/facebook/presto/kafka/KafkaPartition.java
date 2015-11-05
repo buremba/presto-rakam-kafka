@@ -21,12 +21,11 @@ import com.facebook.presto.spi.TupleDomain;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Kafka specific partition representation. Each partition maps to a topic partition and is split along segment boundaries.
@@ -48,11 +47,11 @@ public class KafkaPartition
             TupleDomain tupleDomain,
             List<Range> offsets)
     {
-        this.topicName = checkNotNull(topicName, "schema name is null");
+        this.topicName = Objects.requireNonNull(topicName, "schema name is null");
         this.partitionId = partitionId;
-        this.partitionLeader = checkNotNull(partitionLeader, "partitionLeader is null");
-        this.partitionNodes = ImmutableList.copyOf(checkNotNull(partitionNodes, "partitionNodes is null"));
-        this.tupleDomain = checkNotNull(tupleDomain, "domain is null");
+        this.partitionLeader = Objects.requireNonNull(partitionLeader, "partitionLeader is null");
+        this.partitionNodes = ImmutableList.copyOf(Objects.requireNonNull(partitionNodes, "partitionNodes is null"));
+        this.tupleDomain = Objects.requireNonNull(tupleDomain, "domain is null");
         this.offsets = offsets == null ? null : Collections.unmodifiableList(offsets);
     }
 

@@ -42,12 +42,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static com.facebook.presto.spi.type.BigintType.BIGINT;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
@@ -81,9 +81,9 @@ public class KafkaConnectorPageSource
 
     KafkaConnectorPageSource(KafkaSplit split, KafkaSimpleConsumerManager consumerManager, List<KafkaColumnHandle> columnHandles, Metastore metastore)
     {
-        this.split = checkNotNull(split, "split is null");
-        this.consumerManager = checkNotNull(consumerManager, "consumerManager is null");
-        this.columnHandles = checkNotNull(columnHandles, "columnHandles is null");
+        this.split = Objects.requireNonNull(split, "split is null");
+        this.consumerManager = Objects.requireNonNull(consumerManager, "consumerManager is null");
+        this.columnHandles = Objects.requireNonNull(columnHandles, "columnHandles is null");
 
         String[] topicName = split.getTopicName().split("_", 2);
         this.actualSchema = AvroUtil.convertAvroSchema(metastore.getCollection(topicName[0], topicName[1]));

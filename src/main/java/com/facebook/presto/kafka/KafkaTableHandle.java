@@ -17,10 +17,10 @@ import com.facebook.presto.spi.ConnectorTableHandle;
 import com.facebook.presto.spi.SchemaTableName;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
+
+import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Kafka specific {@link ConnectorTableHandle}.
@@ -50,9 +50,9 @@ public final class KafkaTableHandle
             @JsonProperty("schemaName") String schemaName,
             @JsonProperty("tableName") String tableName)
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
-        this.schemaName = checkNotNull(schemaName, "schemaName is null");
-        this.tableName = checkNotNull(tableName, "tableName is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
+        this.schemaName = Objects.requireNonNull(schemaName, "schemaName is null");
+        this.tableName = Objects.requireNonNull(tableName, "tableName is null");
     }
 
     @JsonProperty
@@ -81,7 +81,7 @@ public final class KafkaTableHandle
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(connectorId, schemaName, tableName);
+        return Objects.hash(connectorId, schemaName, tableName);
     }
 
     @Override
@@ -95,9 +95,9 @@ public final class KafkaTableHandle
         }
 
         KafkaTableHandle other = (KafkaTableHandle) obj;
-        return Objects.equal(this.connectorId, other.connectorId)
-                && Objects.equal(this.schemaName, other.schemaName)
-                && Objects.equal(this.tableName, other.tableName);
+        return Objects.equals(this.connectorId, other.connectorId)
+                && Objects.equals(this.schemaName, other.schemaName)
+                && Objects.equals(this.tableName, other.tableName);
     }
 
     @Override

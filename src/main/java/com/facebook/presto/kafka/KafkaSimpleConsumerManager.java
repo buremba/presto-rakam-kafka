@@ -26,11 +26,10 @@ import kafka.javaapi.consumer.SimpleConsumer;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 /**
@@ -52,9 +51,9 @@ public class KafkaSimpleConsumerManager
             KafkaConnectorConfig kafkaConnectorConfig,
             NodeManager nodeManager)
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
-        this.kafkaConnectorConfig = checkNotNull(kafkaConnectorConfig, "kafkaConfig is null");
-        this.nodeManager = checkNotNull(nodeManager, "nodeManager is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
+        this.kafkaConnectorConfig = Objects.requireNonNull(kafkaConnectorConfig, "kafkaConfig is null");
+        this.nodeManager = Objects.requireNonNull(nodeManager, "nodeManager is null");
 
         this.consumerCache = CacheBuilder.newBuilder().build(new SimpleConsumerCacheLoader());
     }
@@ -74,7 +73,7 @@ public class KafkaSimpleConsumerManager
 
     public SimpleConsumer getConsumer(HostAddress host)
     {
-        checkNotNull(host, "host is null");
+        Objects.requireNonNull(host, "host is null");
         try {
             return consumerCache.get(host);
         }
@@ -85,7 +84,7 @@ public class KafkaSimpleConsumerManager
 
     public void refreshConsumer(HostAddress host)
     {
-        checkNotNull(host, "host is null");
+        Objects.requireNonNull(host, "host is null");
         consumerCache.refresh(host);
     }
 

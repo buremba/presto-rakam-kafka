@@ -24,8 +24,7 @@ import io.airlift.bootstrap.Bootstrap;
 import io.airlift.json.JsonModule;
 
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 /**
  * Creates Kafka Connectors based off connectorId and specific configuration.
@@ -41,9 +40,9 @@ public class KafkaConnectorFactory
             NodeManager nodeManager,
             Map<String, String> optionalConfig)
     {
-        this.typeManager = checkNotNull(typeManager, "typeManager is null");
-        this.nodeManager = checkNotNull(nodeManager, "nodeManager is null");
-        this.optionalConfig = checkNotNull(optionalConfig, "optionalConfig is null");
+        this.typeManager = Objects.requireNonNull(typeManager, "typeManager is null");
+        this.nodeManager = Objects.requireNonNull(nodeManager, "nodeManager is null");
+        this.optionalConfig = Objects.requireNonNull(optionalConfig, "optionalConfig is null");
     }
 
     @Override
@@ -55,8 +54,8 @@ public class KafkaConnectorFactory
     @Override
     public Connector create(final String connectorId, Map<String, String> config)
     {
-        checkNotNull(connectorId, "connectorId is null");
-        checkNotNull(config, "config is null");
+        Objects.requireNonNull(connectorId, "connectorId is null");
+        Objects.requireNonNull(config, "config is null");
 
         try {
             Bootstrap app = new Bootstrap(

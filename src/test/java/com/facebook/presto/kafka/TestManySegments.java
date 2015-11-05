@@ -16,6 +16,7 @@ package com.facebook.presto.kafka;
 import com.facebook.presto.Session;
 import com.facebook.presto.kafka.util.EmbeddedKafka;
 import com.facebook.presto.metadata.SessionPropertyManager;
+import com.facebook.presto.spi.security.Identity;
 import com.facebook.presto.spi.type.BigintType;
 import com.facebook.presto.testing.MaterializedResult;
 import com.facebook.presto.tests.StandaloneQueryRunner;
@@ -27,6 +28,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.security.Principal;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -39,7 +42,7 @@ import static org.testng.Assert.assertEquals;
 public class TestManySegments
 {
     private static final Session SESSION = Session.builder(new SessionPropertyManager())
-            .setUser("user")
+            .setIdentity(new Identity("user", Optional.<Principal>empty()))
             .setSource("source")
             .setCatalog("kafka")
             .setSchema("default")

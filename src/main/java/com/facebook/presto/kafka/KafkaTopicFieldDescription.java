@@ -16,11 +16,11 @@ package com.facebook.presto.kafka;
 import com.facebook.presto.spi.type.Type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
+
+import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class KafkaTopicFieldDescription
@@ -45,7 +45,7 @@ public final class KafkaTopicFieldDescription
     {
         checkArgument(!isNullOrEmpty(name), "name is null or is empty");
         this.name = name;
-        this.type = checkNotNull(type, "type is null");
+        this.type = Objects.requireNonNull(type, "type is null");
         this.mapping = mapping;
         this.comment = comment;
         this.dataFormat = dataFormat;
@@ -98,7 +98,7 @@ public final class KafkaTopicFieldDescription
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(name, type, mapping, dataFormat, formatHint, hidden);
+        return Objects.hash(name, type, mapping, dataFormat, formatHint, hidden);
     }
 
     @Override
@@ -112,12 +112,12 @@ public final class KafkaTopicFieldDescription
         }
 
         KafkaTopicFieldDescription other = (KafkaTopicFieldDescription) obj;
-        return Objects.equal(this.name, other.name) &&
-                Objects.equal(this.type, other.type) &&
-                Objects.equal(this.mapping, other.mapping) &&
-                Objects.equal(this.dataFormat, other.dataFormat) &&
-                Objects.equal(this.formatHint, other.formatHint) &&
-                Objects.equal(this.hidden, other.hidden);
+        return Objects.equals(this.name, other.name) &&
+                Objects.equals(this.type, other.type) &&
+                Objects.equals(this.mapping, other.mapping) &&
+                Objects.equals(this.dataFormat, other.dataFormat) &&
+                Objects.equals(this.formatHint, other.formatHint) &&
+                Objects.equals(this.hidden, other.hidden);
     }
 
     @Override

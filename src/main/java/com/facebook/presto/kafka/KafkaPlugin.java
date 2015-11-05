@@ -21,11 +21,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 /**
  * Presto plugin to use Apache Kafka as a data source.
@@ -44,19 +42,19 @@ public class KafkaPlugin
     @Override
     public synchronized void setOptionalConfig(Map<String, String> optionalConfig)
     {
-        this.optionalConfig = ImmutableMap.copyOf(checkNotNull(optionalConfig, "optionalConfig is null"));
+        this.optionalConfig = ImmutableMap.copyOf(Objects.requireNonNull(optionalConfig, "optionalConfig is null"));
     }
 
     @Inject
     public synchronized void setTypeManager(TypeManager typeManager)
     {
-        this.typeManager = checkNotNull(typeManager, "typeManager is null");
+        this.typeManager = Objects.requireNonNull(typeManager, "typeManager is null");
     }
 
     @Inject
     public synchronized void setNodeManager(NodeManager nodeManager)
     {
-        this.nodeManager = checkNotNull(nodeManager, "node is null");
+        this.nodeManager = Objects.requireNonNull(nodeManager, "node is null");
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,10 +44,7 @@ import static com.facebook.presto.spi.type.TimeWithTimeZoneType.TIME_WITH_TIME_Z
 import static com.facebook.presto.spi.type.TimestampType.TIMESTAMP;
 import static com.facebook.presto.spi.type.TimestampWithTimeZoneType.TIMESTAMP_WITH_TIME_ZONE;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
-import static com.facebook.presto.util.DateTimeUtils.parseTime;
-import static com.facebook.presto.util.DateTimeUtils.parseTimestampWithoutTimeZone;
-import static com.facebook.presto.util.DateTimeUtils.parseTimestampWithTimeZone;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.facebook.presto.util.DateTimeUtils.*;
 import static com.google.common.base.Preconditions.checkState;
 
 public class KafkaLoader
@@ -72,7 +70,7 @@ public class KafkaLoader
     @Override
     public ResultsSession<Void> getResultSession(Session session)
     {
-        checkNotNull(session, "session is null");
+        Objects.requireNonNull(session, "session is null");
         return new KafkaLoadingSession(session);
     }
 

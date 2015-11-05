@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Represents a kafka specific {@link ConnectorSplit}. Each split is mapped to a segment file on disk (based off the segment offset start() and end() values) so that
@@ -51,12 +51,12 @@ public class KafkaSplit
             @JsonProperty("end") long end,
             @JsonProperty("nodes") List<HostAddress> nodes)
     {
-        this.connectorId = checkNotNull(connectorId, "connector id is null");
-        this.topicName = checkNotNull(topicName, "topicName is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connector id is null");
+        this.topicName = Objects.requireNonNull(topicName, "topicName is null");
         this.partitionId = partitionId;
         this.start = start;
         this.end = end;
-        this.nodes = ImmutableList.copyOf(checkNotNull(nodes, "addresses is null"));
+        this.nodes = ImmutableList.copyOf(Objects.requireNonNull(nodes, "addresses is null"));
     }
 
     @JsonProperty

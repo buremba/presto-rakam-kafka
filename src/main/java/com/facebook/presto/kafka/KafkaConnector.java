@@ -23,8 +23,7 @@ import com.facebook.presto.spi.ConnectorRecordSinkProvider;
 import com.facebook.presto.spi.ConnectorSplitManager;
 
 import javax.inject.Inject;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 /**
  * Kafka specific implementation of the Presto Connector SPI. This is a read only connector.
@@ -45,10 +44,10 @@ public class KafkaConnector
             KafkaSplitManager splitManager,
             KafkaPageSourceProvider pageSourceProvider)
     {
-        this.handleResolver = checkNotNull(handleResolver, "handleResolver is null");
-        this.metadata = checkNotNull(metadata, "metadata is null");
-        this.splitManager = checkNotNull(splitManager, "splitManager is null");
-        this.pageSourceProvider = checkNotNull(pageSourceProvider, "recordSetProvider is null");
+        this.handleResolver = Objects.requireNonNull(handleResolver, "handleResolver is null");
+        this.metadata = Objects.requireNonNull(metadata, "metadata is null");
+        this.splitManager = Objects.requireNonNull(splitManager, "splitManager is null");
+        this.pageSourceProvider = Objects.requireNonNull(pageSourceProvider, "recordSetProvider is null");
     }
 
     @Override

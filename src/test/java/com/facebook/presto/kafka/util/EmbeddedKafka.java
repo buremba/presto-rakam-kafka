@@ -28,10 +28,10 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static io.airlift.testing.FileUtils.deleteRecursively;
 
@@ -61,8 +61,8 @@ public class EmbeddedKafka
     EmbeddedKafka(EmbeddedZookeeper zookeeper, Properties overrideProperties)
             throws IOException
     {
-        this.zookeeper = checkNotNull(zookeeper, "zookeeper is null");
-        checkNotNull(overrideProperties, "overrideProperties is null");
+        this.zookeeper = Objects.requireNonNull(zookeeper, "zookeeper is null");
+        Objects.requireNonNull(overrideProperties, "overrideProperties is null");
 
         this.port = TestUtils.findUnusedPort();
         this.kafkaDataDir = Files.createTempDir();

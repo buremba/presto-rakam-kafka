@@ -18,11 +18,11 @@ import com.facebook.presto.spi.ColumnMetadata;
 import com.facebook.presto.spi.type.Type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
 import com.google.common.primitives.Ints;
 
+import java.util.Objects;
+
 import static com.google.common.base.MoreObjects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Kafka specific connector column handle.
@@ -57,10 +57,10 @@ public final class KafkaColumnHandle
             @JsonProperty("hidden") boolean hidden)
 
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
         this.ordinalPosition = ordinalPosition;
-        this.name = checkNotNull(name, "name is null");
-        this.type = checkNotNull(type, "type is null");
+        this.name = Objects.requireNonNull(name, "name is null");
+        this.type = Objects.requireNonNull(type, "type is null");
         this.hidden = hidden;
     }
 
@@ -102,7 +102,7 @@ public final class KafkaColumnHandle
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(connectorId, ordinalPosition, name, type, hidden);
+        return Objects.hash(connectorId, ordinalPosition, name, type, hidden);
     }
 
     @Override
@@ -116,11 +116,11 @@ public final class KafkaColumnHandle
         }
 
         KafkaColumnHandle other = (KafkaColumnHandle) obj;
-        return Objects.equal(this.connectorId, other.connectorId) &&
-                Objects.equal(this.ordinalPosition, other.ordinalPosition) &&
-                Objects.equal(this.name, other.name) &&
-                Objects.equal(this.type, other.type) &&
-                Objects.equal(this.hidden, other.hidden);
+        return Objects.equals(this.connectorId, other.connectorId) &&
+                Objects.equals(this.ordinalPosition, other.ordinalPosition) &&
+                Objects.equals(this.name, other.name) &&
+                Objects.equals(this.type, other.type) &&
+                Objects.equals(this.hidden, other.hidden);
     }
 
     @Override

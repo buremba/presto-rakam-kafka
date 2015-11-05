@@ -23,9 +23,9 @@ import com.facebook.presto.spi.ConnectorTableHandle;
 import com.google.inject.name.Named;
 
 import javax.inject.Inject;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Kafka specific {@link com.facebook.presto.spi.ConnectorHandleResolver} implementation.
@@ -39,8 +39,8 @@ public class KafkaHandleResolver
     KafkaHandleResolver(@Named("connectorId") String connectorId,
             KafkaConnectorConfig kafkaConnectorConfig)
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
-        checkNotNull(kafkaConnectorConfig, "kafkaConfig is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
+        Objects.requireNonNull(kafkaConnectorConfig, "kafkaConfig is null");
     }
 
     @Override
@@ -117,7 +117,7 @@ public class KafkaHandleResolver
 
     KafkaTableHandle convertTableHandle(ConnectorTableHandle tableHandle)
     {
-        checkNotNull(tableHandle, "tableHandle is null");
+        Objects.requireNonNull(tableHandle, "tableHandle is null");
         checkArgument(tableHandle instanceof KafkaTableHandle, "tableHandle is not an instance of KafkaTableHandle");
         KafkaTableHandle kafkaTableHandle = (KafkaTableHandle) tableHandle;
         checkArgument(kafkaTableHandle.getConnectorId().equals(connectorId), "tableHandle is not for this connector");
@@ -127,7 +127,7 @@ public class KafkaHandleResolver
 
     KafkaColumnHandle convertColumnHandle(ColumnHandle columnHandle)
     {
-        checkNotNull(columnHandle, "columnHandle is null");
+        Objects.requireNonNull(columnHandle, "columnHandle is null");
         checkArgument(columnHandle instanceof KafkaColumnHandle, "columnHandle is not an instance of KafkaColumnHandle");
         KafkaColumnHandle kafkaColumnHandle = (KafkaColumnHandle) columnHandle;
         checkArgument(kafkaColumnHandle.getConnectorId().equals(connectorId), "columnHandle is not for this connector");
@@ -136,7 +136,7 @@ public class KafkaHandleResolver
 
     KafkaSplit convertSplit(ConnectorSplit split)
     {
-        checkNotNull(split, "split is null");
+        Objects.requireNonNull(split, "split is null");
         checkArgument(split instanceof KafkaSplit, "split is not an instance of KafkaSplit");
         KafkaSplit kafkaSplit = (KafkaSplit) split;
         checkArgument(kafkaSplit.getConnectorId().equals(connectorId), "split is not for this connector");

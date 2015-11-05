@@ -15,11 +15,11 @@ package com.facebook.presto.kafka;
 
 import com.facebook.presto.spi.ColumnHandle;
 import com.facebook.presto.spi.ColumnMetadata;
+import com.facebook.presto.spi.ConnectorMetadata;
 import com.facebook.presto.spi.ConnectorSession;
 import com.facebook.presto.spi.ConnectorTableHandle;
 import com.facebook.presto.spi.ConnectorTableMetadata;
 import com.facebook.presto.spi.PrestoException;
-import com.facebook.presto.spi.ReadOnlyConnectorMetadata;
 import com.facebook.presto.spi.SchemaTableName;
 import com.facebook.presto.spi.SchemaTablePrefix;
 import com.facebook.presto.spi.TableNotFoundException;
@@ -27,7 +27,6 @@ import com.facebook.presto.spi.type.BigintType;
 import com.facebook.presto.spi.type.BooleanType;
 import com.facebook.presto.spi.type.DateType;
 import com.facebook.presto.spi.type.DoubleType;
-import com.facebook.presto.spi.type.HyperLogLogType;
 import com.facebook.presto.spi.type.TimeType;
 import com.facebook.presto.spi.type.Type;
 import com.facebook.presto.spi.type.VarcharType;
@@ -41,16 +40,13 @@ import org.rakam.collection.SchemaField;
 import org.rakam.collection.event.metastore.Metastore;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 public class KafkaMetadata
-        extends ReadOnlyConnectorMetadata
-{
+        implements ConnectorMetadata {
     private static final Logger log = Logger.get(KafkaMetadata.class);
 
     private final String connectorId;
@@ -64,10 +60,10 @@ public class KafkaMetadata
             Metastore metastore,
             KafkaHandleResolver handleResolver)
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
-        this.metastore = checkNotNull(metastore, "metastore is null");
-        this.kafkaConnectorConfig = checkNotNull(kafkaConnectorConfig, "kafkaConfig is null");
-        this.handleResolver = checkNotNull(handleResolver, "handleResolver is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
+        this.metastore = Objects.requireNonNull(metastore, "metastore is null");
+        this.kafkaConnectorConfig = Objects.requireNonNull(kafkaConnectorConfig, "kafkaConfig is null");
+        this.handleResolver = Objects.requireNonNull(handleResolver, "handleResolver is null");
     }
 
     @Override
@@ -139,7 +135,7 @@ public class KafkaMetadata
     @Override
     public Map<SchemaTableName, List<ColumnMetadata>> listTableColumns(ConnectorSession session, SchemaTablePrefix prefix)
     {
-        checkNotNull(prefix, "prefix is null");
+        Objects.requireNonNull(prefix, "prefix is null");
 
         ImmutableMap.Builder<SchemaTableName, List<ColumnMetadata>> columns = ImmutableMap.builder();
 
@@ -193,8 +189,6 @@ public class KafkaMetadata
                 return DateType.DATE;
 //            case ARRAY:
 //                return new ArrayType(VARCHAR);
-            case HYPERLOGLOG:
-                return HyperLogLogType.HYPER_LOG_LOG;
             case TIME:
                 return TimeType.TIME;
             default:

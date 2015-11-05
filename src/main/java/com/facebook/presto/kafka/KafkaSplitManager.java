@@ -46,14 +46,13 @@ import kafka.javaapi.consumer.SimpleConsumer;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
@@ -76,10 +75,10 @@ public class KafkaSplitManager
             KafkaHandleResolver handleResolver,
             KafkaSimpleConsumerManager consumerManager)
     {
-        this.connectorId = checkNotNull(connectorId, "connectorId is null");
-        this.kafkaConnectorConfig = checkNotNull(kafkaConnectorConfig, "kafkaConfig is null");
-        this.handleResolver = checkNotNull(handleResolver, "handleResolver is null");
-        this.consumerManager = checkNotNull(consumerManager, "consumerManager is null");
+        this.connectorId = Objects.requireNonNull(connectorId, "connectorId is null");
+        this.kafkaConnectorConfig = Objects.requireNonNull(kafkaConnectorConfig, "kafkaConfig is null");
+        this.handleResolver = Objects.requireNonNull(handleResolver, "handleResolver is null");
+        this.consumerManager = Objects.requireNonNull(consumerManager, "consumerManager is null");
     }
 
     @Override

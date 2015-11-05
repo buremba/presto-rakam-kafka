@@ -22,10 +22,8 @@ import com.google.common.collect.ImmutableList;
 import org.rakam.collection.event.metastore.Metastore;
 
 import javax.inject.Inject;
-
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 public class KafkaPageSourceProvider
         implements ConnectorPageSourceProvider
@@ -40,9 +38,9 @@ public class KafkaPageSourceProvider
             KafkaSimpleConsumerManager consumerManager,
             Metastore schemaMetastore)
     {
-        this.handleResolver = checkNotNull(handleResolver, "handleResolver is null");
-        this.consumerManager = checkNotNull(consumerManager, "consumerManager is null");
-        this.schemaMetastore = checkNotNull(schemaMetastore, "schemaRegistry is null");
+        this.handleResolver = Objects.requireNonNull(handleResolver, "handleResolver is null");
+        this.consumerManager = Objects.requireNonNull(consumerManager, "consumerManager is null");
+        this.schemaMetastore = Objects.requireNonNull(schemaMetastore, "schemaRegistry is null");
     }
 
     @Override
