@@ -13,11 +13,15 @@
  */
 package com.facebook.presto.kafka;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
 import org.rakam.analysis.JDBCMetastore;
+import org.rakam.collection.event.FieldDependencyBuilder;
 import org.rakam.collection.event.metastore.Metastore;
 import org.rakam.plugin.JDBCConfig;
 import org.rakam.report.PrestoConfig;
@@ -32,6 +36,9 @@ public class MetastoreModule
     {
         configBinder(binder).bindConfig(JDBCConfig.class,
                 Names.named("presto.metastore.jdbc"), "presto.metastore.jdbc");
+        binder.bind(EventBus.class).in(Scopes.SINGLETON);
+        binder.bind(FieldDependencyBuilder.FieldDependency.class)
+                .toInstance(new FieldDependencyBuilder.FieldDependency(ImmutableSet.of(), ImmutableMap.of()));
         binder.bind(Metastore.class).to(JDBCMetastore.class).in(Scopes.SINGLETON);
         configBinder(binder).bindConfig(PrestoConfig.class);
     }
