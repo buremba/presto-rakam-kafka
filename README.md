@@ -1,3 +1,3 @@
 # presto-rakam-kafka
 
-UNDER DEVELOPMENT
+NOT MAINTAINED
